@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Catalogue</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); }
+        .product-card { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .product-card:hover { transform: translateY(-10px); }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+<div class="min-h-screen flex">
+    <aside class="w-72 glass border-r border-slate-200 hidden lg:block sticky top-0 h-screen p-8">
+        <div class="mb-12">
+            <h1 class="text-2xl font-bold tracking-tight text-indigo-600">Product<span class="text-slate-400">Hub</span></h1>
+        </div>
+
+        <nav>
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">Categories</p>
+            <ul class="space-y-2">
+                <li>
+                    <a href="/"
+                       th:class="${activeCategoryId == null ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-100'} + ' flex items-center px-4 py-3 rounded-xl font-medium transition-all group'">
+                        <i class="fas fa-border-all mr-3 opacity-70"></i>
+                        <span>All Collections</span>
+                    </a>
+                </li>
+                <li th:each="category : ${categories}">
+                    <a th:href="@{'/category/' + ${category.id}}"
+                       th:class="${activeCategoryId == category.id ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-100'} + ' flex items-center px-4 py-3 rounded-xl font-medium transition-all group'">
+                        <i class="fas fa-tag mr-3 opacity-70"></i>
+                        <span th:text="${category.name}">Category</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="flex-1 p-6 lg:p-12">
+        <header class="flex flex-col md:flex-row md:items-center justify-between mb-12 gap-4">
+            <div>
+                <h2 class="text-3xl font-bold text-slate-800" th:text="${activeCategoryId == null ? 'Our Products' : 'Filtered Results'}">Catalogue</h2>
+                <p class="text-slate-500 mt-1">Explore our curated selection of high-quality items.</p>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" placeholder="Search products..." class="pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none w-64 shadow-sm transition-all">
+                </div>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+            <div th:each="product : ${products}" class="product-card bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl overflow-hidden flex flex-col">
+                <div class="relative h-64 overflow-hidden">
+                    <img th:src="${product.imageUrl}" th:alt="${product.name}" class="w-full h-full object-cover">
+                    <div class="absolute top-4 left-4">
+                            <span class="px-4 py-1.5 rounded-full glass border border-white/50 text-xs font-bold text-indigo-600 uppercase tracking-widest shadow-sm"
+                                  th:text="${product.category.name}">Category</span>
+                    </div>
+                </div>
+
+                <div class="p-8 flex flex-col flex-1">
+                    <div class="mb-4">
+                        <h3 class="text-xl font-bold text-slate-800 mb-2" th:text="${product.name}">Product Name</h3>
+                        <p class="text-slate-500 text-sm leading-relaxed line-clamp-2" th:text="${product.description}">Description</p>
+                    </div>
+
+                    <div class="mt-auto flex items-center justify-between pt-6 border-t border-slate-50">
+                        <div>
+                            <p class="text-xs text-slate-400 font-medium">Retail Price</p>
+                            <p class="text-2xl font-bold text-slate-900" th:text="'$' + ${product.price}">$0.00</p>
+                        </div>
+                        <button class="bg-indigo-600 hover:bg-indigo-700 text-white w-12 h-12 rounded-2xl flex items-center justify-center transition-colors shadow-lg shadow-indigo-200">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${products.empty}" class="flex flex-col items-center justify-center py-24 text-center">
+            <div class="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mb-6">
+                <i class="fas fa-box-open text-3xl text-slate-300"></i>
+            </div>
+            <h3 class="text-xl font-bold text-slate-800">No products found</h3>
+            <p class="text-slate-500">We couldn't find anything matching your selection.</p>
+            <a href="/" class="mt-6 text-indigo-600 font-semibold hover:underline">Back to all products</a>
+        </div>
+    </main>
+</div>
+</body>
+</html>
